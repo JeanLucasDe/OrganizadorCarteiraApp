@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './MonthlyDashboard.module.css';
 import MonthlyOverview from '../Components/MonthlyOverview';
-import {auth, app} from "../Service/firebase"
+import {auth, app,firebase} from "../Service/firebase"
 import { getFirestore, collection, getDocs,doc, setDoc, updateDoc, deleteDoc} from "@firebase/firestore";
 import Dashboard from './Dashboard';
 
@@ -189,16 +189,13 @@ const MonthlyDashboard = () => {
     return total;
   }
 
-  const [seed,setSeed] = useState(0)
 
 
 
   const ind = Meses && Meses.findIndex(dados=> dados.id == mes)
 
-  const {dividas,gastosMensais} = ind && Meses[ind] || []
+  const {dividas,gastosMensais} = Meses[ind] || []
 
-
-  
 
   //Salves Debitos
   const SalveDebs = async (index) => {
@@ -246,9 +243,6 @@ const MonthlyDashboard = () => {
  
   //Salve GastosMensais
   const SalveMonth = async (index, id) => {
-
-    
-
     if (ind < 0) {
       await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
         gastosMensais: [{
@@ -285,7 +279,19 @@ const MonthlyDashboard = () => {
     })
   }
 
+  const handleClickLogOut = () => {
+    firebase.auth().signOut()
+    .then(() => {window.location.href = "/"})
+    .catch(() => {alert('não foi possivel sair da conta')})
+}
 
+var resultadoGastosMensais = gastosMensais && gastosMensais.reduce(function(soma, atual) {
+  return soma + atual.value;
+}, 0)
+
+var resultadoDividas = dividas && dividas.reduce(function(soma, atual) {
+  return soma + atual.value;
+}, 0)
 
   const renderContent = () => {
     switch (selectedCategory) {
@@ -332,7 +338,7 @@ const MonthlyDashboard = () => {
             }} className={styles.addButton}
               
               >Adicionar Dívida</button>
-            <p>Total Dívidas: R${calculateRemaining('debts')}</p>
+            <p>Total Dívidas: R${resultadoDividas && resultadoDividas.toFixed(2)}</p>
           </div>
         );
       case 'monthlyExpenses':
@@ -376,7 +382,7 @@ const MonthlyDashboard = () => {
               handleAdd('monthlyExpenses', 'Nova Conta de Luz', 250)
               SalveMonth(-1)
               }} className={styles.addButton}>Adicionar Gasto</button>
-            <p>Total Gastos Mensais: R${calculateRemaining('monthlyExpenses')}</p>
+            <p>Total Gastos Mensais: R${resultadoGastosMensais && resultadoGastosMensais.toFixed(2)}</p>
           </div>
         );
       case 'guaranteeFund':
@@ -493,6 +499,9 @@ const MonthlyDashboard = () => {
             </li>
             <li className="nav-item">
               <a className={`nav-link ${selectedCategory === 'diaria' ? styles.activeNav : ''}`} type='button' onClick={() => setSelectedCategory('diaria')}>Diária</a>
+            </li>
+            <li className="nav-item">
+              <a className={`nav-link`} type="button" onClick={handleClickLogOut}>Sair</a>
             </li>
           </ul>
         </div>

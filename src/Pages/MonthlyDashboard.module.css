@@ -4,6 +4,9 @@
   flex-direction: column;
   height: 100vh;
 }
+a {
+  margin-left: 1em;
+}
 .input {
   width: 100% !important;
 }
@@ -132,7 +135,8 @@ input[type="number"]:focus {
 .addButton {
   background-color: #28a745;
   padding: 10px 20px;
-  margin-top: 20px;
+  margin: 1em auto;
+  display: block;
   font-size: 1.2em;
 }
 
