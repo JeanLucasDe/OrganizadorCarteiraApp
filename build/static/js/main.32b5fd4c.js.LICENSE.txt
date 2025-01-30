@@ -271,17 +271,6 @@
  */
 
 /**
- * React Router DOM v6.22.3
- *
- * Copyright (c) Remix Software Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.md file in the root directory of this source tree.
- *
- * @license MIT
- */
-
-/**
  * React Router v6.22.3
  *
  * Copyright (c) Remix Software Inc.
@@ -301,3 +290,5 @@
       Copyright The Closure Library Authors.
       SPDX-License-Identifier: Apache-2.0
       */
+
+//! moment.js

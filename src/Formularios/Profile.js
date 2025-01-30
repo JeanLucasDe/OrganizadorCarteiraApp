@@ -88,7 +88,7 @@ const Profile = () => {
     }
 
 
-    if (user) {
+    if (usuario && usuario[0]) {
       setTimeout(()=> {
         if (usuario) {
           window.location.href = '/controle'
