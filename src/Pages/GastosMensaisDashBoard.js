@@ -39,12 +39,15 @@ export default function GastosMensaisDashboard () {
 
     const [editedValue, setEditedValue] = useState(null);
     const [newDescription, setNewDescription] = useState("");
+    const [newDate, setNewDate] = useState('') 
     
     const SalveDebs = async (index) => {
         setEdit(false)
         setHandleEditValue(null)
         gastosMensais[index].description = newDescription ? newDescription : gastosMensais[index].description
         gastosMensais[index].value = editedValue ? parseFloat(editedValue) : gastosMensais[index].value
+        dividas[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : dividas[index].vencimento
+        console.log(dividas[index])
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
             gastosMensais : dados
         })
@@ -65,7 +68,7 @@ export default function GastosMensaisDashboard () {
     return (
         <>
         <div className={styles.content}>
-            <button className={styles.btn_fluter} onClick={HandleAddDebt}>+</button>
+            {user && <button className={styles.btn_fluter} onClick={HandleAddDebt}>+</button>}
             <h3>Gastos Mensais</h3>
             <ul className={styles.list}>
                 {dados && dados.map((debts, id)=> {
@@ -81,7 +84,16 @@ export default function GastosMensaisDashboard () {
                             :
                             <p>{debts.description}</p>
                             }
+                            {handleEditValue === id  ?
+                            <input 
+                            type="date"
+                            defaultValue={debts.vencimento}
+                            onChange={(e)=> setNewDate(e.target.value)}
+                            />
+                            :
                             <p>{moment(debts.vencimento).format('DD/MM/YYYY')}</p>
+                            }
+                            
                             {handleEditValue === id ?
                             <input 
                             type="number"
