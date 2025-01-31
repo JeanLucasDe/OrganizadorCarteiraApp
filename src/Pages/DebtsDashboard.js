@@ -23,10 +23,12 @@ export default function DebtsDashboard () {
 
 
     const HandleAddDebt = async() => {
-        const novoItem = { id: dados.length + 1, description: "Nova Dívida", value: 100, vencimento}; // Objeto predefinido
+        const novoArray = []
+        const novoItem = { description: "Nova Dívida", value: 100, vencimento}; // Objeto predefinido
         setDados((prev) => [...prev, novoItem]); // Adiciona o novo item ao array
+        novoArray.push(...dados, novoItem)
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
-            dividas : dados
+            dividas : novoArray
         })
     }
 

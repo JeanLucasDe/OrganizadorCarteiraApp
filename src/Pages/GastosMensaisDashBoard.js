@@ -22,10 +22,12 @@ export default function GastosMensaisDashboard () {
 
 
     const HandleAddDebt = async() => {
-        const novoItem = { id: dados.length + 1, description: "Novo Gasto", value: 100 , vencimento}; // Objeto predefinido
+        const novoArray = []
+        const novoItem = { description: "Novo Gasto", value: 100 , vencimento}; // Objeto predefinido
         setDados((prev) => [...prev, novoItem]); // Adiciona o novo item ao array
+        novoArray.push(...dados, novoItem)
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
-            gastosMensais : dados
+            gastosMensais : novoArray
         })
     }
 
@@ -46,11 +48,11 @@ export default function GastosMensaisDashboard () {
         setHandleEditValue(null)
         gastosMensais[index].description = newDescription ? newDescription : gastosMensais[index].description
         gastosMensais[index].value = editedValue ? parseFloat(editedValue) : gastosMensais[index].value
-        dividas[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : dividas[index].vencimento
-        console.log(dividas[index])
+        gastosMensais[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : gastosMensais[index].vencimento
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
             gastosMensais : dados
         })
+        
     }
 
 
