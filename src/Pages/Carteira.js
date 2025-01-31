@@ -55,6 +55,7 @@ export default function Carteira () {
   
                   setMeses((dataMeses.docs.map((doc) => ({...doc.data(), id: doc.id}))))
                   setUsuarios((dataUsers.docs.map((doc) => ({...doc.data(), id: doc.id}))))
+
                   setConclued(true)
               };
               getUsers()
@@ -64,7 +65,7 @@ export default function Carteira () {
 
 
     const ind = Meses && Meses.findIndex(dados=> dados.id == mes)
-    const usuario = usuarios && user && usuarios.filter(dados => dados.id && user.email)
+    
 
     const {dividas,gastosMensais} = Meses[ind] || []
 
@@ -77,23 +78,20 @@ export default function Carteira () {
         return soma + atual.value;
       }, 0)
 
+      const usuario = usuarios && user && usuarios.findIndex(dados => dados.id == user.email) || []
 
-
-
-
+      if (conclued) {
+        if (usuario < 0) {
+          window.location.href="/perfil"
+        }
+      }
 
 
 
     return (
         <>
-        {conclued && usuario && usuario.length > 0 ?
-        <div>
           <NavBar/>
           <Outlet context={[ind, db, user, mes, dividas,resultadoDividas, gastosMensais, resultadoGastosMensais]}/>
-        </div>
-        :
-        window.location.href='/perfil'
-        }
         </>
     )
 }

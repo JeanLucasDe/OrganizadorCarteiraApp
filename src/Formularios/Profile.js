@@ -7,7 +7,7 @@ import { getFirestore, collection, getDocs,doc, setDoc} from "@firebase/firestor
 
 const Profile = () => {
 
-  
+  const [conclued, setConclued] = useState(false)  
 
   const now = new Date();
   const meses = [
@@ -59,7 +59,7 @@ const Profile = () => {
                 const getUsers = async () => {
                   const dataUser = await getDocs(Collec)
                   setUsuarios((dataUser.docs.map((doc) => ({...doc.data(), id: doc.id}))))
-  
+                  setConclued(true)
               };
               getUsers()
             }
@@ -90,14 +90,10 @@ const Profile = () => {
     }
 
 
-    console.log(usuario  && usuario.length > 0)
-    if (usuario ) {
-      setTimeout(()=> {
-        if (usuario && usuario.length > 0) {
-          window.location.href = '/page/geral'
-        }
-
-      },1000)
+    if (conclued) {
+      if (usuario >= 0) {
+        window.location.href="/page/geral"
+      }
     }
 
 
