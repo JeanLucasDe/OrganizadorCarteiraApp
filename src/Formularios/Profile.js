@@ -85,7 +85,7 @@ const Profile = () => {
         dia: 0
     })
       .then(()=> {
-        window.location.href = '/page'
+        window.location.href = '/page/geral'
       }).catch(e=> console.error(e))
     }
 

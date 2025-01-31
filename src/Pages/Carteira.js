@@ -32,6 +32,8 @@ export default function Carteira () {
     const [Meses, setMeses] = useState([])
   
     const [user, setUser] = useState();
+    const [usuarios, setUsuarios] = useState()
+    const [conclued, setConclued] = useState(false)
     const db = getFirestore(app)
     
     useEffect(()=>{
@@ -46,11 +48,14 @@ export default function Carteira () {
                 })
                 const getUsers = async () => {
                   const Collecmeses = collection(db, `Organizador/${user.email}/meses`)
+                  const CollecUsers = collection(db, `Organizador`)
   
                   const dataMeses = await getDocs(Collecmeses)
+                  const dataUsers = await getDocs(CollecUsers)
   
                   setMeses((dataMeses.docs.map((doc) => ({...doc.data(), id: doc.id}))))
-  
+                  setUsuarios((dataUsers.docs.map((doc) => ({...doc.data(), id: doc.id}))))
+                  setConclued(true)
               };
               getUsers()
             }
@@ -59,6 +64,7 @@ export default function Carteira () {
 
 
     const ind = Meses && Meses.findIndex(dados=> dados.id == mes)
+    const usuario = usuarios && user && usuarios.filter(dados => dados.id && user.email)
 
     const {dividas,gastosMensais} = Meses[ind] || []
 
@@ -80,8 +86,14 @@ export default function Carteira () {
 
     return (
         <>
-            <NavBar/>
-            <Outlet context={[ind, db, user, mes, dividas,resultadoDividas, gastosMensais, resultadoGastosMensais]}/>
+        {conclued && usuario && usuario.length > 0 ?
+        <div>
+          <NavBar/>
+          <Outlet context={[ind, db, user, mes, dividas,resultadoDividas, gastosMensais, resultadoGastosMensais]}/>
+        </div>
+        :
+        window.location.href='/perfil'
+        }
         </>
     )
 }
