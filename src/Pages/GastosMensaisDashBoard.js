@@ -46,9 +46,11 @@ export default function GastosMensaisDashboard () {
     const SalveDebs = async (index) => {
         setEdit(false)
         setHandleEditValue(null)
-        gastosMensais[index].description = newDescription ? newDescription : gastosMensais[index].description
-        gastosMensais[index].value = editedValue ? parseFloat(editedValue) : gastosMensais[index].value
-        gastosMensais[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : gastosMensais[index].vencimento
+
+        dados[index].description = newDescription ? newDescription : dados[index].description
+        dados[index].value = editedValue ? parseFloat(editedValue) : dados[index].value
+        dados[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : dados[index].vencimento
+
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
             gastosMensais : dados
         })
@@ -57,9 +59,9 @@ export default function GastosMensaisDashboard () {
 
 
     const DeleteDebs = async(index) => {
-        const novoArray = dados.filter((item) => item.id !== index);
+        const novoArray = dados.filter((item, id) => id !== index);
         setDados((prev) => {
-            const novoArray = prev.filter((item) => item.id !== index);
+            const novoArray = prev.filter((item,id) => id !== index);
             return novoArray.length > 0 ? novoArray : []; // Retorna array vazio corretamente
         });
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
@@ -111,7 +113,7 @@ export default function GastosMensaisDashboard () {
                         </div>
                         <div>
                             <p type='button' onClick={() => SelectID(id)}>✏️</p>
-                            <p type="button" onClick={() => DeleteDebs(debts.id)}>X</p>
+                            <p type="button" onClick={() => DeleteDebs(id)}>X</p>
                         </div>
                     </li>
 

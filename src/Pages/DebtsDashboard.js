@@ -47,9 +47,9 @@ export default function DebtsDashboard () {
     const SalveDebs = async (index) => {
         setEdit(false)
         setHandleEditValue(null)
-        dividas[index].description = newDescription ? newDescription : dividas[index].description
-        dividas[index].value = editedValue ? parseFloat(editedValue) : dividas[index].value
-        dividas[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : dividas[index].vencimento
+        dados[index].description = newDescription ? newDescription : dados[index].description
+        dados[index].value = editedValue ? parseFloat(editedValue) : dados[index].value
+        dados[index].vencimento = newDate ? moment(newDate).format('YYYY-MM-DD') : dados[index].vencimento
         await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
             dividas : dados
         })
