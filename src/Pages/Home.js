@@ -29,7 +29,7 @@ export default function Home () {
     return (
         <>
             {user ?
-            window.location.href= '/perfil'
+            window.location.href= '/page/geral'
             :
             <Login/>
             }
