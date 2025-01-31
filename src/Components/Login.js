@@ -13,7 +13,7 @@ const Login = () => {
         if (!displayName && !photoURL) {
             throw new Error('Usuário sem Nome ou foto')
         }
-        window.location.href="/perfil/controle"
+        window.location.href="/perfil"
     }
 }
 
