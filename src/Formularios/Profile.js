@@ -88,10 +88,11 @@ const Profile = () => {
     }
 
 
-    if (usuario && usuario[0]) {
+    console.log(usuario)
+    if (usuario ) {
       setTimeout(()=> {
-        if (usuario) {
-          window.location.href = '/controle'
+        if (usuario ) {
+          window.location.href = '/page'
         }
 
       },1000)

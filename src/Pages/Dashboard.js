@@ -60,15 +60,20 @@ const Dashboard = () => {
 
   const {dividas, gastosMensais, meta, diarias, gastosDiarios, acumulado,dia} = Meses && Meses[ind] || []
 
-
+  const [ValueDayAcumulator, setValueDayAcumulator] = useState(0)
+  const [dispenses, setDispenses] = useState({})
+  
+  useEffect(()=> {
+    if (dia && dia >= 0) {
+      setValueDayAcumulator(dia)
+      setDispenses(gastosDiarios)
+    }
+  },dia,gastosDiarios)
+  
 
   const expenses = gastosDiarios && Object.values(gastosDiarios).reduce((acc, curr) => acc + curr, 0);
 
-  const TotalCDescontos = dia-expenses
-
-
-
-
+  const TotalCDescontos = ValueDayAcumulator-expenses
 
 
 
@@ -82,13 +87,6 @@ const Dashboard = () => {
   }); // Gastos diários com combustível, aluguel e alimentação
   const [totalSavings, setTotalSavings] = useState(0); // Total acumulado ao longo do mês
 
-  const handleExpenseChange = (event) => {
-    const { name, value } = event.target;
-    setDailyExpenses((prev) => ({
-      ...prev,
-      [name]: value ? parseFloat(value) : 0
-    }));
-  };
 
   const handleGoalChange = (event) => {
     setDailyGoal(parseFloat(event.target.value));
@@ -101,8 +99,6 @@ const Dashboard = () => {
     setDailyExpenses({ fuel: 0, rent: 0, food: 0 });
   };
 
-  const dailyRemaining = dailyGoal - (dailyExpenses.fuel + dailyExpenses.rent + dailyExpenses.food);
-  const monthlyAccumulated = totalSavings + dailyRemaining;
 
   const today = new Date();
   const formattedDate = today.toLocaleDateString('pt-BR', {
@@ -112,15 +108,16 @@ const Dashboard = () => {
     day: 'numeric'
   });
 
-
+  
 
   const SendValueAcumulator = async() => {
     const result = (dia + parseFloat(valor))
+    setValueDayAcumulator(result)
 
     if (valor) {
       await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
           dia: parseFloat(result)
-        }).then(()=> window.location.reload())
+        })
     }
   }
 
@@ -132,7 +129,8 @@ const Dashboard = () => {
         dia:0,
         diarias: [...diarias, {
           data:moment().format('YYYY-MM-DD'),
-          value: TotalCDescontos
+          value: TotalCDescontos,
+          gastosDiarios
         }]
       }).then(()=> window.location.reload())
     
@@ -141,7 +139,7 @@ const Dashboard = () => {
   const AlterMeta= async () => {
     await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
         meta: dailyGoal,
-      }).then(()=> window.location.reload())
+      })
     
   }
 
@@ -150,8 +148,16 @@ const Dashboard = () => {
   const [maintence, setMaintence] = useState()
   const [extra, setExtra] = useState()
   const [food, setFood]= useState()
+  const [seed,setSeed] = useState(0)
 
   const AlterDispenses = async () => {
+
+    gastosDiarios.fuel =fuel ? parseFloat(fuel) : parseFloat(gastosDiarios.fuel)
+    gastosDiarios.rent =rent ? parseFloat(rent) : parseFloat(gastosDiarios.rent)
+    gastosDiarios.maintence=maintence ? parseFloat(maintence) : parseFloat(gastosDiarios.maintence)
+    gastosDiarios.extra=extra ? parseFloat(extra) :parseFloat( gastosDiarios.extra)
+    gastosDiarios.food=food ? parseFloat(food) : parseFloat(gastosDiarios.food)
+
     await updateDoc(doc(db, `Organizador/${user.email}/meses`, `${mes}`), {
         gastosDiarios: {
           fuel: fuel ? parseFloat(fuel) : parseFloat(gastosDiarios.fuel),
@@ -160,12 +166,12 @@ const Dashboard = () => {
           extra: extra ? parseFloat(extra) :parseFloat( gastosDiarios.extra),
           food:food ? parseFloat(food) : parseFloat(gastosDiarios.food)
         },
-      }).then(()=> window.location.reload())
-    
+      })
+      setSeed(seed+1)
   }
 
 
-  const restante = meta - dia
+  const restante = meta - ValueDayAcumulator
   
 
   return (
@@ -250,15 +256,17 @@ const Dashboard = () => {
 
           </label>
         </div>
-        <button>Editar <span className={styles.editIcon} type="button" onClick={() => AlterDispenses()}>✏️</span></button>
+        <button onClick={() => AlterDispenses()}>Salvar</button>
         <h4>Restante para atingir a Meta Diária:</h4>
-        <div className={styles.remaining}>
+        {restante > 0 ?<div className={styles.remaining}>
           <span className={styles.amount}>R$ {restante && restante.toFixed(2)}</span>
-        </div>
+        </div>:
+        <h5>Meta Batida!</h5>
+        }
 
         <h4>Total Até Agora:</h4>
         <div className={styles.remaining}>
-          <span className={styles.amount}>R$ {dia && dia.toFixed(2)}</span>
+          <span className={styles.amount}>R$ {ValueDayAcumulator && ValueDayAcumulator.toFixed(2)}</span>
         </div>
 
         <div className={styles.monthlyAccumulated}>
@@ -275,11 +283,10 @@ const Dashboard = () => {
 
       <div className={styles.card}>
         <button className={styles.concludeButton} onClick={()=> {
-          handleConcludeDay()
           sendAcumulator()
           }}>
           {TotalCDescontos > 0 &&
-          <span>
+          <span key={seed}>
             <h5>Lucro</h5>
             <h5>R$ {TotalCDescontos.toFixed(2)}</h5>
           </span>
