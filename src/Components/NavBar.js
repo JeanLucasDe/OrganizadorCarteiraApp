@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styles from '../Pages/MonthlyDashboard.module.css';
 import {auth, app,firebase} from "../Service/firebase"
 
@@ -8,13 +9,17 @@ import {auth, app,firebase} from "../Service/firebase"
 }
 
 export default function NavBar () {
+
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleNavbar = () => setIsOpen(!isOpen);
+
     return (
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
             <a className="navbar-brand" href="/">Dashboard Financeiro</a>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"  aria-label="Toggle navigation" >
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded={isOpen ? 'true' : 'false'} aria-label="Toggle navigation" onClick={toggleNavbar}>
                 <span className="navbar-toggler-icon"></span>
             </button>
-            <div className={`collapse navbar-collapse`} id="navbarNav">
+            <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
                 <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
                     <a className={`nav-link `} href='/page/geral'>Geral</a>

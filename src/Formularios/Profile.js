@@ -7,6 +7,8 @@ import { getFirestore, collection, getDocs,doc, setDoc} from "@firebase/firestor
 
 const Profile = () => {
 
+  
+
   const now = new Date();
   const meses = [
     {mes:'janeiro', id:0},
@@ -83,7 +85,7 @@ const Profile = () => {
         dia: 0
     })
       .then(()=> {
-        window.location.href = '/controle'
+        window.location.href = '/page'
       }).catch(e=> console.error(e))
     }
 
